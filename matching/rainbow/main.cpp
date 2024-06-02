@@ -85,15 +85,6 @@ int main(int argc, char **argv) {
 
 
 
-
-
-
-
-
-
-
-
-
     int size = contents.size();
     short *stateArray = new short[DICTIONARY_BYTES + 320000000];
     GetDictionaryState(stateArray, fsm);

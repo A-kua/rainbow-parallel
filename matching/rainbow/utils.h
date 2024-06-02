@@ -57,7 +57,13 @@ inline int ScanByte(short &state, unsigned char token, FSM *fsm) {
     return state;
 };
 
-int readFileName(char *path, vector<string> &name);
+int readFileName(const char *path, vector<string> &names);
+
+FSM *readFromFile(char *tableFile, char *acceptFile);
+
+int readFiles(const vector<string> &names, vector<Content> &contents);
+
+
 
 int LoadText(char *path, vector<Content> &buff, vector<string> &name);
 
@@ -76,7 +82,6 @@ short rainbow_for_dynamic(Input *token, int length, int dist, short *state_array
 short
 rainbow_for_static(Input *token, int length, int index, short *state_array, FSM *fsm, short state, short *dictionary);
 
-FSM *readFromFile(char *tableFile, char *acceptFile);
 
 short SkipStaticPointer(unsigned char *dictionary, int length, int index, FSM *fsm, short state, short *stateArray,
                         int position);
@@ -84,4 +89,3 @@ short SkipStaticPointer(unsigned char *dictionary, int length, int index, FSM *f
 short SkipDynamicPointer(unsigned char *contents, int length, int index, FSM *fsm, short state, short *stateArray,
                          int position);
 
-int readFiles(const vector<string> &names, vector<Content> &contents);

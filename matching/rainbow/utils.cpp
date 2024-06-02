@@ -11,7 +11,7 @@ extern unsigned long long compress;
 extern unsigned long long total;
 extern int literal_num;
 
-void GetDictionaryState(short *DictionaryState,const FSM *fsm) {
+void GetDictionaryState(short *DictionaryState, const FSM *fsm) {
     const unsigned char *byte = kBrotliDictionaryData;
     short state = 0;
     for (int i = 0; i < DICTIONARY_BYTES; i++) {
@@ -133,7 +133,7 @@ short SkipDynamicPointer(unsigned char *contents, int length, int index, FSM *fs
     return state;
 }
 
-FSM *readFromFile(const char *tableFile, const char *acceptFile) {
+FSM *readFromFile(char *tableFile, char *acceptFile) {
     vector<int> acceptVec, vecTable;
     int temp_dat;
 
@@ -180,15 +180,15 @@ FSM *readFromFile(const char *tableFile, const char *acceptFile) {
 int readFiles(const vector<string> &names, vector<Content> &contents) {
     contents.resize(names.size());
 
-    transform(names.begin(), names.end(), contents.begin(), [](const string& name) {
+    transform(names.begin(), names.end(), contents.begin(), [](const string &name) {
         std::ifstream file(name, std::ios::binary | std::ios::ate);
         if (!file.is_open()) {
             return Content{nullptr, 0};
         }
         std::streamsize size = file.tellg();
         file.seekg(0, std::ios::beg);
-        auto* buffer = new unsigned char[static_cast<size_t>(size)];
-        file.read(reinterpret_cast<char*>(buffer), size);
+        auto *buffer = new unsigned char[static_cast<size_t>(size)];
+        file.read(reinterpret_cast<char *>(buffer), size);
         return Content{buffer, static_cast<size_t>(size)};
     });
     return 0;
