@@ -1,5 +1,5 @@
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <malloc.h>
 #include <vector>
 #include <sys/stat.h>
@@ -7,55 +7,81 @@
 #include <cstring>
 #include <fstream>
 #include <sstream>
+#include <memory>
+#include <vector>
+#include <string>
+#include <fstream>
+#include <algorithm>
+#include <memory>
+
 using namespace std;
+
 #define DICTIONARY_BYTES 122784
-typedef union meta
-{
-	unsigned int count;
-	unsigned int copy_len;
-	int index;
-}m;
-
-typedef struct
-{
-	unsigned char* contents;
-	m* meta;
-	size_t metaLength;
-}Input;
 
 
-typedef struct
-{
-	unsigned char* pBuff;
-	size_t size;
-}m_buffer;
+#define STRUCT(type) \
+typedef struct _tag_##type type;\
+struct _tag_##type
 
-typedef struct _FSM {
-	int* list;
-	bool* accept;
-}FSM;
+#define UNION(type) \
+typedef union _tag_##type type;\
+union _tag_##type
 
-inline int ScanByte(short &state, unsigned char token, FSM* fsm) {
-	state = fsm->list[state * 256 + token];
-	return state;
+UNION(meta) {
+    unsigned int count;
+    unsigned int copy_len;
+    int index;
 };
 
-int readFileName(char *path,vector<string> &name);
 
-int LoadText(char *path, vector<m_buffer> &buff,vector<string> &name);
+STRUCT(Input) {
+    unsigned char *contents;
+    meta *meta;
+    size_t metaLength;
+};
 
-void GetDictionaryState(short* DictionaryState, FSM* fsm);
 
-int BrInit(vector<m_buffer>& contentsBuf, vector<m_buffer>& metaBuf, Input** Txt);
+STRUCT(Content) {
+    unsigned char *pBuff;
+    size_t size;
+};
+
+
+STRUCT(FSM) {
+    int *list;
+    bool *accept;
+};
+
+inline int ScanByte(short &state, unsigned char token, FSM *fsm) {
+    state = fsm->list[state * 256 + token];
+    return state;
+};
+
+int readFileName(char *path, vector<string> &name);
+
+int LoadText(char *path, vector<Content> &buff, vector<string> &name);
+
+void GetDictionaryState(short *DictionaryState, FSM *fsm);
+
+int BrInit(vector<Content> &contentsBuf, vector<Content> &metaBuf, Input **Txt);
+
 void Performance();
-short naive_for_static(Input* token, int length, short* state_array, FSM* fsm, short state);
-short naive_for_dynamic(Input* token, int length, short* state_array, FSM* fsm, short state);
 
-short rainbow_for_dynamic(Input* token, int length, int dist, short* state_array, FSM* fsm, short state);
-short rainbow_for_static(Input* token, int length, int index, short* state_array, FSM* fsm, short state, short* dictionary);
+short naive_for_static(Input *token, int length, short *state_array, FSM *fsm, short state);
 
-FSM* readFromFile(char* tableFile, char* acceptFile);
+short naive_for_dynamic(Input *token, int length, short *state_array, FSM *fsm, short state);
 
-short SkipStaticPointer(unsigned char* dictionary, int length, int index, FSM* fsm, short state, short* stateArray, int position);
+short rainbow_for_dynamic(Input *token, int length, int dist, short *state_array, FSM *fsm, short state);
 
-short SkipDynamicPointer(unsigned char* contents, int length, int index, FSM* fsm, short state, short* stateArray, int position);
+short
+rainbow_for_static(Input *token, int length, int index, short *state_array, FSM *fsm, short state, short *dictionary);
+
+FSM *readFromFile(char *tableFile, char *acceptFile);
+
+short SkipStaticPointer(unsigned char *dictionary, int length, int index, FSM *fsm, short state, short *stateArray,
+                        int position);
+
+short SkipDynamicPointer(unsigned char *contents, int length, int index, FSM *fsm, short state, short *stateArray,
+                         int position);
+
+int readFiles(const vector<string> &names, vector<Content> &contents);
